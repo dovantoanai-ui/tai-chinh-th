@@ -304,9 +304,35 @@ body{font-family:'Be Vietnam Pro',sans-serif;background:var(--bg);color:var(--tx
 .imp-drop-ico{font-size:28px;margin-bottom:8px;}
 .imp-mau{display:inline-block;color:var(--bl);font-size:12px;font-weight:600;
   cursor:pointer;text-decoration:underline;margin-top:6px;}
+
+#login-overlay{position:fixed;inset:0;z-index:9999;background:linear-gradient(135deg,#0f172a,#1e293b);display:flex;align-items:center;justify-content:center;}
+#login-overlay.hidden{display:none;}
+.login-box{background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.12);border-radius:20px;padding:36px 28px;width:300px;max-width:90vw;text-align:center;}
+.login-logo{font-size:36px;margin-bottom:12px;}
+.login-title{font-size:18px;font-weight:700;color:#fff;margin-bottom:4px;}
+.login-sub{font-size:13px;color:rgba(255,255,255,.5);margin-bottom:24px;}
+.login-inp{width:100%;padding:13px 16px;border-radius:11px;border:1.5px solid rgba(255,255,255,.15);background:rgba(255,255,255,.07);color:#fff;font-size:16px;outline:none;box-sizing:border-box;text-align:center;letter-spacing:4px;font-weight:700;}
+.login-inp:focus{border-color:#00d26a;}
+.login-inp::placeholder{letter-spacing:normal;font-weight:400;}
+.login-btn{margin-top:14px;width:100%;padding:13px;border-radius:11px;border:none;background:#00d26a;color:#fff;font-size:15px;font-weight:700;cursor:pointer;}
+.login-btn:active{opacity:.85;}
+.login-err{margin-top:10px;font-size:13px;color:#ff6b6b;min-height:18px;}
+
 </style>
 </head>
 <body>
+
+<div id="login-overlay">
+  <div class="login-box">
+    <div class="login-logo">📊</div>
+    <div class="login-title">Tai Chinh TH</div>
+    <div class="login-sub">Nhap mat khau de tiep tuc</div>
+    <input class="login-inp" type="password" id="loginInp" placeholder="Mat khau..." maxlength="30" onkeydown="if(event.key==='Enter')doLogin()">
+    <button class="login-btn" onclick="doLogin()">Dang nhap</button>
+    <div class="login-err" id="loginErr"></div>
+  </div>
+</div>
+
 
 <!-- KHO SELECTOR -->
 <div class="khosel-wrap" id="khosel">
@@ -3205,7 +3231,37 @@ function impDownloadMau(fmt2){
   toast('Da tai file mau!');
 }
 
+
+var _APP_PW = 'nemthanh3638';
+var _SESSION_KEY = 'tcth_auth';
+
+function checkAuth(){
+  var s=sessionStorage.getItem(_SESSION_KEY);
+  if(s===_APP_PW){
+    document.getElementById('login-overlay').classList.add('hidden');
+  } else {
+    document.getElementById('login-overlay').classList.remove('hidden');
+    setTimeout(function(){var i=document.getElementById('loginInp');if(i)i.focus();},100);
+  }
+}
+
+function doLogin(){
+  var inp=document.getElementById('loginInp');
+  var err=document.getElementById('loginErr');
+  if(!inp)return;
+  if(inp.value===_APP_PW){
+    sessionStorage.setItem(_SESSION_KEY,_APP_PW);
+    document.getElementById('login-overlay').classList.add('hidden');
+    err.textContent='';
+  } else {
+    err.textContent='Mat khau khong dung, thu lai!';
+    inp.value='';
+    inp.focus();
+  }
+}
+
 // == INIT ==
+checkAuth();
 initKho();
 document.getElementById('sc-home').classList.add('on');
 </script>
